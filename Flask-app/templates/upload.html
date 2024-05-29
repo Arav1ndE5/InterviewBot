@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume</title>
+    <style>
+        /* Spinner styles */
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid lightgrey;
+            border-top: 5px solid blue;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <h1>Upload Resume</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
+        <label for="resume">Upload Resume Photo or Screenshot:</label><br>
+        <input type="file" id="resume" name="resume" accept=".JPG, .jpeg, .heic, .jpg, .png" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <div id="spinner" class="spinner"></div>
+</body>
+</html>
