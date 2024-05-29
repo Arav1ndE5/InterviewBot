@@ -8,7 +8,7 @@ app.config['UPLOAD_FOLDER'] = 'resources/'
 
 # Set a secret key for session management
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
-gemini_api = os.getenv('GOOGLE_API_KEY')
+gemini_api = os.getenv('GOOGLE_API_KEY1')
 
 
 # Configure the API key
@@ -77,7 +77,7 @@ def result():
     resume_path = session.get('resume_path')
 
     if job_description and resume_path:
-        
+
         # Extract text from the resume
         resume_data = extract_text_from_image(resume_path)
 
