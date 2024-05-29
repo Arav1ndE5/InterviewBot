@@ -4,7 +4,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'resources/'
+app.config['UPLOAD_FOLDER'] = 'static/'
 
 # Set a secret key for session management
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
