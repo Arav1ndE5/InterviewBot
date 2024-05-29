@@ -64,7 +64,7 @@ def upload():
         # Save the uploaded file to the resources folder
         if resume_file:
             filename = resume_file.filename
-            resume_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename)
+            resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             resume_file.save(resume_path)
 
             session['resume_path'] = resume_path
