@@ -1,22 +1,22 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, jsonify
 import google.generativeai as genai
 import os
-
+import random
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/'
 
 # Set a secret key for session management
+x = random.choice([2, 1, 2, 2, 1, 1, 2, 1])
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
-gemini_api = os.getenv('GOOGLE_API_KEY1')
-
+gemini_api = os.getenv(f'GOOGLE_API_KEY{x}')
 
 # Configure the API key
 genai.configure(api_key=gemini_api)
 
 # Set up the model configuration
 generation_config = {
-    "temperature": 0,
+    "temperature": 0.9,
     "top_p": 0.95,
     "top_k": 32,
     "max_output_tokens": 1024,
@@ -67,19 +67,80 @@ def upload():
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             resume_file.save(resume_path)
 
-            session['resume_path'] = resume_path
-            return redirect(url_for('result'))
+            # Generate content from the resume
+            prompt_parts = [
+                "List all the data that you observe from the resume",
+                "resume: ",
+                genai.upload_file(resume_path)
+            ]
+            response = model.generate_content(prompt_parts)
+            session['resume_data'] = response.text
+
+            return redirect(url_for('interview'))
     return render_template("upload.html")
+
+@app.route('/interview')
+def interview():
+    return render_template('interview.html')
+
+
+@app.route('/start-interview', methods=['POST'])
+def start_interview():
+    shortened_jd = session.get('shortened_jd')
+    resume_data = session.get('resume_data')
+
+    chat = model.start_chat(history=[])
+
+    
+    response=chat.send_message(f"""
+                            You are given my job description that is enclosed within '//':
+                            //{shortened_jd}//
+
+                            and my resume enclosed within '<>':
+                            <{resume_data}>
+
+                            Act as a technical interviewer for me based on the resume and job description once the candidate greats you.
+
+                            The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+                            Additionally, the interviewer should assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate only when the candidate replies 'bye'.
+                            Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview.
+                            """)
+    
+    print(response.text)
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        if data and 'user_input' in data:
+            if 'user_input'!='bye':
+                user_input = data['user_input']
+                print(user_input)
+                
+
+                response = chat.send_message(f'({user_input})')
+
+                response_str = response.text.strip()
+                response_str = response_str.replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:","")
+
+
+                return jsonify({'message': response_str})
+            elif 'user_input'=='bye':
+                response=chat.send_message(user_input)
+                session['interview_result'] = response.text
+                return redirect(url_for('result'))
+
+        else:
+            return jsonify({'error': 'Invalid request data'})
+    else:
+        return jsonify({'error': 'Method not allowed'})
 
 @app.route('/result')
 def result():
     job_description = session.get('job_description')
-    resume_path = session.get('resume_path')
+    resume_data = session.get('resume_data')
 
-    if job_description and resume_path:
-
+    if job_description and resume_data:
         # Extract text from the resume
-        resume_data = extract_text_from_image(resume_path)
+        resume_data = session['resume_data']
 
         shortened_jd = session['shortened_jd']
 
@@ -102,21 +163,11 @@ def result():
         response = model.generate_content([resume_scoring_prompt])
         resume_score_evaluation = response.text
 
-        return render_template('result.html', resume_score_evaluation=resume_score_evaluation)
-    return redirect(url_for('home'))
+        interview_evaluation=session['interview_result']
 
-def extract_text_from_image(image_path):
-    # Generate content from the resume
-    prompt_parts = [
-        "List all the data that you observe from the resume",
-        "resume: ",
-        genai.upload_file(image_path)
-    ]
-    response = model.generate_content(prompt_parts)
-    resume_data = response.text
-    return resume_data
+        return render_template('result.html', resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
-    # app.run(debug=True,host='0.0.0.0')
     app.run(debug=True)
