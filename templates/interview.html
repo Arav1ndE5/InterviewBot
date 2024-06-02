@@ -70,6 +70,15 @@
             border-radius: 20px;
             cursor: pointer;
         }
+        .chat-end {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #d9534f;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +92,7 @@
         <div class="chat-input-container">
             <input type="text" id="answer" class="chat-input" placeholder="Type your answer here" onkeypress="handleKeyPress(event)">
             <button onclick="submitAnswer()" class="chat-submit">Send</button>
+            <button onclick="endInterview()" class="chat-end">End Interview</button>
         </div>
     </div>
     <script>
@@ -91,12 +101,11 @@
             const data = await response.json();
             addMessage(data.message, 'assistant');
         }
-
+    
         async function submitAnswer() {
             const answerInput = document.getElementById('answer');
             const answer = answerInput.value.trim();
             if (answer !== '') {
-                console.log(answer)
                 addMessage(answer, 'user');
                 answerInput.value = '';
                 const response = await fetch('/start-interview', {
@@ -107,12 +116,14 @@
                 const data = await response.json();
                 if (data.error) {
                     alert(data.error);
+                } else if (data.redirect) {
+                    window.location.href = data.redirect;
                 } else {
                     addMessage(data.message, 'assistant');
                 }
             }
         }
-
+    
         function addMessage(content, sender) {
             const chatMessages = document.getElementById('chat-messages');
             const messageBubble = document.createElement('div');
@@ -121,15 +132,31 @@
             chatMessages.appendChild(messageBubble);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
+    
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 submitAnswer();
             }
         }
-
+    
+        async function endInterview() {
+            const response = await fetch('/start-interview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_input: 'ends the interview' })
+            });
+            const data = await response.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                alert('Failed to end the interview');
+            }
+        }
+    
         // Start the interview by fetching the initial question
         fetchInitialQuestion();
     </script>
+    
+    
 </body>
 </html>

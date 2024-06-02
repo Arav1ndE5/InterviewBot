@@ -1,15 +1,23 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Evaluation Result</title>
+    <title>Interview Results</title>
+    
 </head>
 <body>
-    <h1>Resume Evaluation Result</h1>
-    <pre>{{ resume_score_evaluation }}</pre>
-    <h1>Interview Evaluation Result</h1>
-    <pre>{{ interview_evaluation }}</pre>
+    <div class="result-container">
+        <div class="result-header">
+            <h1>Performance Report</h1>
+            <hr>
+        </div>
+        <div class="result-content">
+            
+            {{ interview_evaluation | safe }}
+            <hr>
+            {{ resume_score_evaluation | safe }}
+        </div>
+    </div>
 </body>
 </html>

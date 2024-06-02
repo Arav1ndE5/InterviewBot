@@ -91,47 +91,45 @@ def start_interview():
 
     chat = model.start_chat(history=[])
 
-    
-    response=chat.send_message(f"""
-                            You are given my job description that is enclosed within '//':
-                            //{shortened_jd}//
+    response = chat.send_message(f"""
+        You are given my job description that is enclosed within '//':
+        //{shortened_jd}//
 
-                            and my resume enclosed within '<>':
-                            <{resume_data}>
+        and my resume enclosed within '<>':
+        <{resume_data}>
 
-                            Act as a technical interviewer for me based on the resume and job description once the candidate greats you.
+        Act as a technical interviewer for me based on the resume and job description once the candidate greets you.
 
-                            The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-                            Additionally, the interviewer should assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate only when the candidate replies 'bye'.
-                            Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview.
-                            """)
-    
-    print(response.text)
-    
+        The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. You are a strict human interviewer.
+        """)
+    interview={}
     if request.method == 'POST':
         data = request.get_json()
         if data and 'user_input' in data:
-            if 'user_input'!='bye':
-                user_input = data['user_input']
-                print(user_input)
-                
-
+            user_input = data['user_input']
+            interview["candidate"] = user_input
+    
+            if user_input.lower() == 'ends the interview':
+                response = chat.send_message(f'''
+                                            Analyze the interview given inside'<>'.
+                                            <{interview}>
+                                            now assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
+                                            make output in html such that they look good under a <h2> tag
+                                            ''')
+                response_str=response.text.strip().replace('**','').replace('. *','<br>')
+                session['interview_result'] = response_str
+                return jsonify({'redirect': url_for('result')})
+            else:
                 response = chat.send_message(f'({user_input})')
-
-                response_str = response.text.strip()
-                response_str = response_str.replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:","")
-
-
+                response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
+                interview["Interviewer"] = response_str
                 return jsonify({'message': response_str})
-            elif 'user_input'=='bye':
-                response=chat.send_message(user_input)
-                session['interview_result'] = response.text
-                return redirect(url_for('result'))
-
         else:
             return jsonify({'error': 'Invalid request data'})
     else:
         return jsonify({'error': 'Method not allowed'})
+
 
 @app.route('/result')
 def result():
@@ -139,12 +137,10 @@ def result():
     resume_data = session.get('resume_data')
 
     if job_description and resume_data:
-        # Extract text from the resume
         resume_data = session['resume_data']
-
         shortened_jd = session['shortened_jd']
+        interview_evaluation = session.get('interview_result', 'No interview evaluation available.')
 
-        # Resume scoring
         resume_scoring_prompt = f"""
         You are given a job description that is enclosed within '//':
         //{shortened_jd}//
@@ -158,12 +154,14 @@ def result():
         Strengths:
         Areas of improvement:
         Overall assessment:
+
+
+        make output in html such that they look good under a <h2> tag
         """
 
         response = model.generate_content([resume_scoring_prompt])
-        resume_score_evaluation = response.text
-
-        interview_evaluation=session['interview_result']
+        response_str=response.text.strip().replace('**','').replace('. *','<br>')
+        resume_score_evaluation = response_str
 
         return render_template('result.html', resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
     return redirect(url_for('home'))
