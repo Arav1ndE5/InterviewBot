@@ -101,7 +101,7 @@ def start_interview():
         Act as a technical interviewer for me based on the resume and job description once the candidate greets you.
 
         The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. You are a strict human interviewer.
+        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't generate content for candidate.
         """)
     interview={}
     if request.method == 'POST':
