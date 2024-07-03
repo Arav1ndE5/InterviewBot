@@ -173,7 +173,7 @@ def start_interview():
             print(interview['interviewer'][-1])
 
 
-            if get_result or interview['interviewer'][-1] == "Click end interview to get result":
+            if get_result or interview['interviewer'][-1] == "Click end interview to get result.":
                 response = chat.send_message(f'''
                     Analyze the interview given inside '<>'.
                     <{interview}>
@@ -183,6 +183,7 @@ def start_interview():
                 response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
                 print(response_str)
                 session['interview_result'] = response_str
+                session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
 
                 return jsonify({'redirect': url_for('result')})
             
