@@ -1,0 +1,41 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(45deg, #1de9b6, #1dc4e9);
+}
+
+.nav-wrapper {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.card {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-large {
+    border-radius: 30px;
+}
+
+.input-field input[type="text"].white-text,
+.input-field textarea.white-text {
+    color: #fff;
+    border-bottom: 1px solid #fff;
+}
+
+.input-field label {
+    color: #fff;
+}
+
+.file-field .btn {
+    border-radius: 30px;
+}
+
+::placeholder {
+    color: #ccc;
+}
