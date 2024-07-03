@@ -151,7 +151,7 @@ def start_interview():
         1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
         2. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate and wait for the candidates response.
         3. Candidate's questions are enclosed within '()'.
-        4. If interview has ended return "Click end interview to get result". Don't return anything else. 
+        4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
         """)
     # initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
 
@@ -175,9 +175,10 @@ def start_interview():
 
             if get_result or interview['interviewer'][-1] == "Click end interview to get result.":
                 response = chat.send_message(f'''
-                    Analyze the interview given inside '<>'.
+                    Analyze the following dictionary that contains interviewer's questions and candidate's responses as lists where the first question is given by interview["interviewer"][0] and answer is given by interview["candidate"][0] and second question is given by interview["interviewer"][1] and answer is given by interview["candidate"][1] so on.
+                    The interview is given inside '<>'.
                     <{interview}>
-                    now assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
+                    now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
                     make output in html such that they look good under a <h2> tag
                 ''')
                 response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
