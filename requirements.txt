@@ -2,4 +2,4 @@ flask
 google.generativeai
 pdf2jpg
 gunicorn
-cv2
+opencv-python
