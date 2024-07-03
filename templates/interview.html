@@ -11,6 +11,7 @@
         <div class="chat-header">
             <h1>Technical Interview</h1>
         </div>
+        <div id="spinner" class="spinner"></div>
         <div class="chat-messages" id="chat-messages">
             <!-- Chat messages will be dynamically added here -->
         </div>
@@ -21,11 +22,6 @@
         </div>
     </div>
     <script>
-        async function fetchInitialQuestion() {
-            const response = await fetch('/start-interview');
-            const data = await response.json();
-            addMessage(data.message, 'assistant');
-        }
     
         async function submitAnswer() {
             const answerInput = document.getElementById('answer');
@@ -65,6 +61,9 @@
         }
     
         async function endInterview() {
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('chat-messages').style.display = 'none';
+            
             const response = await fetch('/start-interview', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,8 +77,6 @@
             }
         }
     
-        // Start the interview by fetching the initial question
-        fetchInitialQuestion();
     </script>
     
     

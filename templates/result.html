@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     
 </head>
 <body>
     <div class="result-container">
         <div class="result-header">
-            <h1>Performance Report</h1>
+            <h1>Performance Report</h1><br>
+            <h3>
+                candidate name  : {{candidate}}<br>
+                Job Title       : {{job_title}}
+            </h3>
             <hr>
         </div>
         <div class="result-content">

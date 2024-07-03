@@ -171,7 +171,7 @@ def start_interview():
             message = 1
             # Initialize the interview dictionary with lists for candidate and interviewer responses
             if 'interview' not in session:
-                session['interview'] = {"candidate": [], "interviewer": []}
+                session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
             interview = session['interview']
             print(interview)
             print(interview['interviewer'][-1])
