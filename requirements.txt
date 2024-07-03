@@ -1,4 +1,4 @@
 flask
 google.generativeai
-pdf2image
+pdf2jpg
 gunicorn

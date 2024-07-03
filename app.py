@@ -2,6 +2,10 @@ from flask import Flask, request, render_template, redirect, url_for, session, j
 import google.generativeai as genai
 import os
 import random
+from pdf2jpg import pdf2jpg
+import cv2
+import shutil
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = "uploads"
@@ -36,6 +40,10 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings,
 )
 
+@app.before_request
+def clear_session():
+    session.clear()
+
 @app.route('/')
 def home():
     return render_template("home.html")
@@ -43,6 +51,7 @@ def home():
 @app.route('/job', methods=['GET', 'POST'])
 def job():
     if request.method == 'POST':
+        session['job_title'] = request.form['jobtitle']
         session['job_description'] = request.form['job']
 
         # Shorten job description
@@ -60,7 +69,9 @@ def job():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+ 
     if request.method == 'POST':
+        session['candidate'] = request.form['candidate']
         resume_file = request.files['resume']
         # Save the uploaded file to the resources folder
         if resume_file:
@@ -68,7 +79,35 @@ def upload():
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             resume_file.save(resume_path)
 
+            # Check if the file is a PDF
+            if filename.lower().endswith('.pdf'):
+                # Convert PDF to images using pdf2jpg
+                output_path = os.path.join(app.config['UPLOAD_FOLDER'])
+                result = pdf2jpg.convert_pdf2jpg(resume_path, output_path, pages="ALL", dpi=200)
+
+                # Check if the result is as expected
+                if not isinstance(result, list) or not result:
+                    print("Conversion failed or no output generated.")
+                else:
+
+                    # Concatenate images horizontally if there are images to concatenate
+                    if len(result[0]['output_jpgfiles'])>1:
+                        # Extract the list of generated image files
+                        images = []
+                        for img in result[0]['output_jpgfiles']:
+                            images.append(cv2.imread(img))
+                        resume_image = cv2.hconcat(images)
+                        concatenated_image_path = os.path.join(output_path, "concatenated_resume.jpg")
+                        cv2.imwrite(concatenated_image_path, resume_image)
+                        print(f"Concatenated image saved at: {concatenated_image_path}")
+                        resume_path = concatenated_image_path  # Use the concatenated image path for processing
+                    else:
+                        resume_path=result[0]['output_jpgfiles'][0]
+                        print(result)
+                        print(result[0]['output_jpgfiles'][0])
+
             # Generate content from the resume
+            print(resume_path)
             prompt_parts = [
                 "List all the data that you observe from the resume",
                 "resume: ",
@@ -76,9 +115,21 @@ def upload():
             ]
             response = model.generate_content(prompt_parts)
             session['resume_data'] = response.text
+            
+             # Clean up the uploaded files
+            for file in os.listdir(app.config['UPLOAD_FOLDER']):
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print(f'Failed to delete {file_path}. Reason: {e}')
 
-            return redirect(url_for('interview'))
+        return redirect(url_for('interview'))
     return render_template("upload.html")
+
 
 @app.route('/interview')
 def interview():
@@ -100,10 +151,13 @@ def start_interview():
         <{resume_data}>
 
         Act as a technical interviewer for me based on the resume and job description once the candidate greets you.
-
-        The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate and wait for the candidates response.""")
-    initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
+        points to remember and breaking them is prohibited:
+        1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+        2. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate and wait for the candidates response.
+        3. Candidate's questions are enclosed within '()'.
+        4. If interview has ended return "Click end interview to get result". Don't return anything else. 
+        """)
+    # initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
 
     if request.method == 'POST':
         data = request.get_json()
@@ -113,9 +167,17 @@ def start_interview():
             print(get_result)
             print(user_input)
 
-            interview = {"candidate": user_input}
+            #add message number:
+            message = 1
+            # Initialize the interview dictionary with lists for candidate and interviewer responses
+            if 'interview' not in session:
+                session['interview'] = {"candidate": [], "interviewer": []}
+            interview = session['interview']
+            print(interview)
+            print(interview['interviewer'][-1])
 
-            if get_result:
+
+            if get_result or interview['interviewer'][-1] == "Click end interview to get result":
                 response = chat.send_message(f'''
                     Analyze the interview given inside '<>'.
                     <{interview}>
@@ -129,18 +191,23 @@ def start_interview():
                 return jsonify({'redirect': url_for('result')})
             
             if user_input:
+                interview["candidate"].append(user_input)
                 response = chat.send_message(f'({user_input})')
                 response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
+                interview["interviewer"].append(response_str)
+                session['interview'] = interview  # Update the session with the latest interview data
                 print(response_str)
                 return jsonify({'message': response_str})
+            
         else:
             return jsonify({'error': 'Invalid request data'})
 
-    return jsonify({'message': initial_question})
 
 
 @app.route('/result')
 def result():
+    job_title = session.get('job_title')
+    candidate = session.get('candidate')
     job_description = session.get('job_description')
     resume_data = session.get('resume_data')
 
@@ -170,7 +237,7 @@ def result():
         response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
         resume_score_evaluation = response_str
 
-        return render_template('result.html', resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
+        return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
     return redirect(url_for('home'))
 
 
