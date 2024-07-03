@@ -40,10 +40,6 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings,
 )
 
-@app.before_request
-def clear_session():
-    session.clear()
-
 @app.route('/')
 def home():
     return render_template("home.html")
