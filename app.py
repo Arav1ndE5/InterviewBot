@@ -4,7 +4,8 @@ import os
 import random
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/'
+app.config['UPLOAD_FOLDER'] = "uploads"
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Set a secret key for session management
 x = random.choice([2, 1, 2, 2, 1, 1, 2, 1])
@@ -47,9 +48,9 @@ def job():
         # Shorten job description
         job_description = session.get('job_description')
         shorten_jd_prompt = [
-            f"""Make the job description given inside '//'
+            f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities
             /{job_description}/
-            into short and contains most meaningful parts such as experience, responsibilities"""
+            """
         ]
         response = model.generate_content(shorten_jd_prompt)
         session['shortened_jd'] = response.text
@@ -84,13 +85,13 @@ def interview():
     return render_template('interview.html')
 
 
-@app.route('/start-interview', methods=['POST'])
+@app.route('/start-interview', methods=['GET', 'POST'])
 def start_interview():
     shortened_jd = session.get('shortened_jd')
     resume_data = session.get('resume_data')
 
     chat = model.start_chat(history=[])
-
+    # Initial question setup for GET request
     response = chat.send_message(f"""
         You are given my job description that is enclosed within '//':
         //{shortened_jd}//
@@ -101,34 +102,41 @@ def start_interview():
         Act as a technical interviewer for me based on the resume and job description once the candidate greets you.
 
         The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate.
-        """)
-    interview={}
+        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate and wait for the candidates response.""")
+    initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
+
     if request.method == 'POST':
         data = request.get_json()
-        if data and 'user_input' in data:
-            user_input = data['user_input']
-            interview["candidate"] = user_input
-    
-            if user_input.lower() == 'ends the interview':
+        if data:
+            user_input = data.get('user_input')
+            get_result = data.get('get_result')
+            print(get_result)
+            print(user_input)
+
+            interview = {"candidate": user_input}
+
+            if get_result:
                 response = chat.send_message(f'''
-                                            Analyze the interview given inside'<>'.
-                                            <{interview}>
-                                            now assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
-                                            make output in html such that they look good under a <h2> tag
-                                            ''')
-                response_str=response.text.strip().replace('**','').replace('. *','<br>')
+                    Analyze the interview given inside '<>'.
+                    <{interview}>
+                    now assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
+                    make output in html such that they look good under a <h2> tag
+                ''')
+                response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
+                print(response_str)
                 session['interview_result'] = response_str
+
                 return jsonify({'redirect': url_for('result')})
-            else:
+            
+            if user_input:
                 response = chat.send_message(f'({user_input})')
                 response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
-                interview["Interviewer"] = response_str
+                print(response_str)
                 return jsonify({'message': response_str})
         else:
             return jsonify({'error': 'Invalid request data'})
-    else:
-        return jsonify({'error': 'Method not allowed'})
+
+    return jsonify({'message': initial_question})
 
 
 @app.route('/result')
@@ -155,12 +163,11 @@ def result():
         Areas of improvement:
         Overall assessment:
 
-
         make output in html such that they look good under a <h2> tag
         """
 
         response = model.generate_content([resume_scoring_prompt])
-        response_str=response.text.strip().replace('**','').replace('. *','<br>')
+        response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
         resume_score_evaluation = response_str
 
         return render_template('result.html', resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)

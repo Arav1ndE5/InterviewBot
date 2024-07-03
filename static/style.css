@@ -1,41 +1,74 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(45deg, #1de9b6, #1dc4e9);
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
 }
-
-.nav-wrapper {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.container {
-    margin-top: 50px;
-}
-
-.card {
+.chat-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
-.btn-large {
-    border-radius: 30px;
+.chat-header {
+    background-color: #075e54;
+    color: #ffffff;
+    padding: 10px;
+    text-align: center;
 }
-
-.input-field input[type="text"].white-text,
-.input-field textarea.white-text {
-    color: #fff;
-    border-bottom: 1px solid #fff;
+.chat-messages {
+    height: 400px;
+    overflow-y: scroll;
+    padding: 10px;
+    background-color: #e5ddd5;
 }
-
-.input-field label {
-    color: #fff;
+.chat-bubble {
+    max-width: 80%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
 }
-
-.file-field .btn {
-    border-radius: 30px;
+.chat-bubble.user {
+    background-color: #dcf8c6;
+    margin-left: auto;
+    margin-right: 0;
 }
-
-::placeholder {
-    color: #ccc;
+.chat-bubble.assistant {
+    background-color: #ffffff;
+    margin-left: 0;
+    margin-right: auto;
+}
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #ffffff;
+}
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+}
+.chat-submit {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #075e54;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.chat-end {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #d9534f;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
 }
