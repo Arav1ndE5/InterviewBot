@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Description</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles-job.css') }}">
+
+    <script>
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'block';
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <!-- <video id="background-video" autoplay loop muted style="display:hidden;">
-            <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
-          </video> -->
         <div class="col 12" style="padding: 10%;">
             <h1>Enter Job Description</h1>
         </div>
-        <form action="/job" method="post">
+        <form action="/job" method="post" onsubmit="showSpinner()">
             <label for="jobtitle">Job Title:</label><br>
             <textarea id="jobtitle" name="jobtitle" rows="1" cols="50" required></textarea><br><br>
             <label for="job">Job Description:</label><br>
@@ -22,5 +25,6 @@
             <input type="submit" value="Next">
         </form>
     </div>
+    <div id="spinner" class="spinner"></div>
 </body>
 </html>

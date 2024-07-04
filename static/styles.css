@@ -7,27 +7,14 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-image: url('job_bg.png');
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: #222; /* Dark background color */
     color: #fff; /* Light text color */
-    margin: 0;
-    padding: 0;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    position: relative; /* Ensure body is relative for absolute positioning */
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
@@ -41,24 +28,9 @@ body {
     position: relative; /* Ensure container is relative for z-index */
 }
 
-.container video {
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    z-index: -1;
-    background-color: #000000;
-}
-
 h1 {
-    color: #fff;
-    margin-top: 0; /* Ensure heading is at the top */
-    padding-top: 20px; /* Padding for spacing */
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 form {
@@ -71,15 +43,15 @@ label {
     color: #ccc; /* Lighter label color */
 }
 
-textarea {
+textarea,
+input[type="file"],
+input[type="submit"] {
     width: calc(100% - 20px); /* Adjust for padding */
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #444; /* Darker border color */
     border-radius: 4px;
-    resize: vertical;
-    font-size: 16px;
-    background-color: #333; /* Darker textarea background */
+    background-color: #333; /* Darker input background */
     color: #fff; /* Light text color */
 }
 
@@ -98,14 +70,32 @@ input[type="submit"]:hover {
     background-color: #0056b3;
 }
 
-/* Responsive Styles */
+.spinner {
+    display: none;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #fff;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 @media (max-width: 768px) {
-    .container {
+    form {
         padding: 10px;
-        max-width: 80%;
     }
-    textarea {
+    textarea,
+    input[type="file"],
+    input[type="submit"] {
         font-size: 14px;
     }
 }
@@ -114,7 +104,9 @@ input[type="submit"]:hover {
     h1 {
         font-size: 24px;
     }
-    textarea {
+    textarea,
+    input[type="file"],
+    input[type="submit"] {
         font-size: 12px;
     }
 }

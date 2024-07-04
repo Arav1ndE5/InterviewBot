@@ -14,14 +14,18 @@
     </script>
 </head>
 <body>
-    <h1>Upload Resume</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
-        <label for="candidate">Name of candidate : </label><br>
-        <textarea id="candidate" name="candidate" rows="1" cols="50" required></textarea><br><br>
-        <label for="resume">Upload Resume Photo or Screenshot or pdf:</label><br>
-        <input type="file" id="resume" name="resume" accept=".JPG, .jpeg, .heic, .jpg, .png, .pdf" required><br><br>
-        <input type="submit" value="Submit">
-    </form>
+    <div class="container">
+        <div class="col 12" style="padding: 10%;">
+            <h1>Upload Resume</h1>
+        </div>
+        <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showSpinner()">
+            <label for="candidate">Name of candidate : </label><br>
+            <textarea id="candidate" name="candidate" rows="1" cols="50" required></textarea><br><br>
+            <label for="resume">Upload Resume Photo or Screenshot:</label><br>
+            <input type="file" id="resume" name="resume" accept=".JPG, .jpeg, .heic, .jpg, .png, .pdf" required><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
     <div id="spinner" class="spinner"></div>
 </body>
 </html>
