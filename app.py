@@ -5,6 +5,7 @@ import random
 from pdf2jpg import pdf2jpg
 import cv2
 import shutil
+import markdown
 
 
 app = Flask(__name__)
@@ -181,7 +182,8 @@ def start_interview():
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
                     make output in html such that they look good under a <h2> tag
                 ''')
-                response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
+                # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
+                response_str = markdown.markdown(response.text)
                 print(response_str)
                 session['interview_result'] = response_str
                 session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
@@ -232,7 +234,8 @@ def result():
         """
 
         response = model.generate_content([resume_scoring_prompt])
-        response_str = response.text.strip().replace('**', '').replace('. *', '<br>')
+        response_str = markdown.markdown(response.text)
+        # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
         resume_score_evaluation = response_str
 
         return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
