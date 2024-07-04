@@ -1,20 +1,26 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Description</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles-job.css') }}">
 </head>
 <body>
-    <h1>Enter Job Description</h1>
-    <form action="/job" method="post">
-        <label for="jobtitle">Job Title:</label><br>
-        <textarea id="jobtitle" name="jobtitle" rows="1" cols="50" required></textarea><br><br>
-        <label for="job">Job Description:</label><br>
-        <textarea id="job" name="job" rows="4" cols="50" required></textarea><br><br>
-        <input type="submit" value="Next">
-    </form>
+    <div class="container">
+        <!-- <video id="background-video" autoplay loop muted style="display:hidden;">
+            <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+          </video> -->
+        <div class="col 12" style="padding: 10%;">
+            <h1>Enter Job Description</h1>
+        </div>
+        <form action="/job" method="post">
+            <label for="jobtitle">Job Title:</label><br>
+            <textarea id="jobtitle" name="jobtitle" rows="1" cols="50" required></textarea><br><br>
+            <label for="job">Job Description:</label><br>
+            <textarea id="job" name="job" rows="4" cols="50" required></textarea><br><br>
+            <input type="submit" value="Next">
+        </form>
+    </div>
 </body>
 </html>

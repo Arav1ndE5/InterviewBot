@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Bot - Home</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles-home.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body class="grey darken-4 white-text">
-    <nav>
-        <div class="nav-wrapper teal">
-            <a href="#" class="brand-logo center">Interview Bot</a>
-        </div>
-    </nav>
-    <div class="container">
-        <h1 class="center-align">Welcome to Interview Bot</h1>
-        <div class="row center-align">
-            <a href="{{ url_for('job') }}" class="btn-large waves-effect waves-light teal">Start Interview</a>
+<body>
+    <div class="video-container">
+        <video autoplay loop muted playsinline>
+            <source src="{{ url_for('static', filename='video2.mp4') }}" type="video/mp4">
+        </video>
+    </div>
+    <div class="overlay">
+        <div class="content">
+            <h1 class="center-align">Ace your <span class="highlight">Interviews</span></h1>
+            <p class="center-align">Prepare for your interviews with realistic simulations. Get personalized feedback on your answers and improve your skills.</p>
+            <div class="center-align">
+                <a href="{{ url_for('job') }}" class="btn-large waves-effect waves-light red accent-3">Try now</a>
+            </div>
+            <div class="features row">
+                <div class="col s12 m6 l4">
+                    <h5>Interactive Interviews</h5>
+                    <p>Experience realistic interview simulations with AI-driven questions.</p>
+                </div>
+                <div class="col s12 m6 l4">
+                    <h5>Personalized Feedback</h5>
+                    <p>Receive tailored feedback to improve your performance.</p>
+                </div>
+                <div class="col s12 m6 l4">
+                    <h5>Practice Anytime</h5>
+                    <p>Access our platform 24/7 and practice at your convenience.</p>
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@ from pdf2jpg import pdf2jpg
 import os
 import cv2
 
-resume_path = r"C:\Users\Aravind\Downloads\Aravind_es_Resume.pdf"
+resume_path = r"C:\Users\Aravind\Downloads\test ui.pdf"
 output_path = r'D:\Projects--\InterviewBot\output'  # Use an absolute path for the output directory
 
 # Ensure the output directory exists
