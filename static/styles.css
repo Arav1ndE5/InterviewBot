@@ -1,112 +1,144 @@
-/* Reset and General Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #222; /* Dark background color */
-    color: #fff; /* Light text color */
+    background-color: #121212;
+    color: #e1e1e1;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    padding: 0;
 }
 
-.container {
-    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
-    padding: 20px;  
-    border-radius: 10px;
-    max-width: 600px;
+/* Container for the chat */
+.chat-container {
     width: 100%;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Darker box shadow */
-    position: relative; /* Ensure container is relative for z-index */
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-form {
-    margin: 5%;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #ccc; /* Lighter label color */
-}
-
-textarea,
-input[type="file"],
-input[type="submit"] {
-    width: calc(100% - 20px); /* Adjust for padding */
+/* Header styles */
+.chat-header {
+    background-color: #333;
+    color: #e1e1e1;
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #444; /* Darker border color */
-    border-radius: 4px;
-    background-color: #333; /* Darker input background */
-    color: #fff; /* Light text color */
+    text-align: center;
+    border-bottom: 1px solid #444;
 }
 
-input[type="submit"] {
-    background-color: #007bff;
-    color: white;
-    border: none;
+/* Messages area */
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: scroll;
+    padding: 10px;
+    background-color: #2e2e2e;
+    border-bottom: 1px solid #444;
+}
+
+/* Chat bubbles */
+.chat-bubble {
+    max-width: 80%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.chat-bubble.user {
+    background-color: #3b3b3b;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.chat-bubble.assistant {
+    background-color: #2e2e2e;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Input area */
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #333;
+    border-top: 1px solid #444;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 20px;
+    background-color: #2e2e2e;
+    color: #e1e1e1;
+    box-sizing: border-box;
+}
+
+.chat-input::placeholder {
+    color: #888;
+}
+
+.chat-submit, .chat-end {
     padding: 10px 20px;
-    font-size: 16px;
+    border-radius: 20px;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    margin-left: 10px;
+    border: none;
 }
 
-input[type="submit"]:hover {
-    background-color: #0056b3;
+.chat-submit {
+    background-color: #5e5e5e;
+    color: #e1e1e1;
 }
 
+.chat-submit:hover {
+    background-color: #777;
+}
+
+.chat-end {
+    background-color: #d9534f;
+    color: #ffffff;
+}
+
+.chat-end:hover {
+    background-color: #e57373;
+}
+
+/* Spinner animation */
 .spinner {
     display: none;
-    border: 4px solid rgba(255, 255, 255, 0.3);
+    width: 50px;
+    height: 50px;
+    border: 5px solid lightgrey;
+    border-top: 5px solid blue;
     border-radius: 50%;
-    border-top: 4px solid #fff;
-    width: 40px;
-    height: 40px;
     animation: spin 1s linear infinite;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
+/* Keyframes for spinner animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-    form {
-        padding: 10px;
-    }
-    textarea,
-    input[type="file"],
-    input[type="submit"] {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    h1 {
-        font-size: 24px;
-    }
-    textarea,
-    input[type="file"],
-    input[type="submit"] {
-        font-size: 12px;
+/* Responsive adjustments */
+@media only screen and (max-width: 600px) {
+    .chat-container {
+        max-width: 100%;
+        box-shadow: none;
     }
 }
