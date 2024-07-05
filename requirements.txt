@@ -3,3 +3,4 @@ google.generativeai
 pdf2jpg
 gunicorn
 opencv-python
+markdown
