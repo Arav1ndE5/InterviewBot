@@ -1,7 +1,14 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
 html, body {
     height: 100%;
     margin: 0;
-    overflow: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
     font-family: 'Roboto', sans-serif;
     background-color: black;
 }
