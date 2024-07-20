@@ -189,7 +189,7 @@ def start_interview():
                     ''')
                 # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
                 response_str = markdown.markdown(response.text)
-                response_str = response.text.strip().replace('*','')
+                response_str = response.text.strip().replace('**','')
                 print(response_str)
                 session['interview_result'] = response_str
                 session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
@@ -242,7 +242,7 @@ def result():
         response = model.generate_content([resume_scoring_prompt])
         response_str = markdown.markdown(response.text)
         # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
-        response_str = response.text.strip().replace('*','')
+        response_str = response.text.strip().replace('**','')
         resume_score_evaluation = response_str
 
         return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
