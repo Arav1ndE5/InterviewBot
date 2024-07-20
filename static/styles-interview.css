@@ -8,23 +8,21 @@ body {
     background-color: #121212; /* Darker background for the dark theme */
     color: #e1e1e1;
     margin: 0;
-    margin-top: 10px;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
+    overflow: hidden;
 }
 
 /* Container for the chat */
 .chat-container {
-    width: 80%;
-    height: 100%;
-    max-width: 1600px;
+    width: 100%;
+    max-width: 600px; /* Reduced max-width for smaller screens */
+    height: 100vh; /* Full viewport height */
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
     background-color: #1e1e1e; /* Darker background for the container */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
@@ -46,7 +44,7 @@ body {
 /* Messages area */
 .chat-messages {
     flex-grow: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 10px;
     background-color: #1a1a1a; /* Darker background for messages area */
     border-bottom: 1px solid #444;
@@ -56,25 +54,26 @@ body {
 
 /* Chat bubbles */
 .chat-bubble {
-    max-width: 80%;
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 10px;
+    max-width: 90%; /* Adjusted for smaller screens */
+    margin: 5px 0; /* Reduced margin for smaller screens */
+    padding: 10px 15px; /* Adjusted padding for readability */
     position: relative;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .chat-bubble.user {
-    background-color: #333; /* Slightly darker user bubble */
+    background-color: #333333a5; /* Slightly darker user bubble */
     margin-left: auto;
     margin-right: 10px; /* Add padding to the right */
+    border-radius: 20px 20px 0px 20px;
 }
 
 .chat-bubble.assistant {
-    background-color: #2e2e2e; /* Assistant bubble */
+    background-color: #5b5959b9; /* Assistant bubble */
     margin-left: 10px; /* Add padding to the left */
     margin-right: auto;
+    border-radius: 20px 20px 20px 0px;
 }
 
 /* Input area */
@@ -105,6 +104,7 @@ body {
     cursor: pointer;
     margin-left: 10px;
     border: none;
+    font-size: 14px; /* Adjusted for readability */
 }
 
 .chat-submit {
@@ -149,7 +149,34 @@ body {
 /* Responsive adjustments */
 @media only screen and (max-width: 600px) {
     .chat-container {
-        max-width: 100%;
+        width: 100%;
+        max-width: 100%; /* Ensure full width on small screens */
+        height: 100vh;
         box-shadow: none;
+        padding: 5px; /* Adjusted padding for smaller screens */
+    }
+    .chat-header {
+        font-size: 16px; /* Adjusted for readability */
+    }
+    .chat-messages {
+        font-size: 14px; /* Adjusted for readability */
+    }
+    .chat-input-container {
+        padding: 5px;
+    }
+    .chat-input {
+        padding: 8px;
+        font-size: 14px; /* Adjusted for readability */
+    }
+    .chat-submit, .chat-end {
+        padding: 8px 15px; /* Adjusted padding for smaller screens */
+        font-size: 12px; /* Adjusted for readability */
+    }
+    .chat-bubble {
+        max-width: 90%; /* Ensure bubbles fit within smaller screens */
+        padding: 8px 12px; /* Adjusted padding for readability */
+    }
+    body {
+        overflow: auto; /* Allow scrolling if necessary */
     }
 }
