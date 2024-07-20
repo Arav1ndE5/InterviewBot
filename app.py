@@ -99,9 +99,12 @@ def start_interview():
         <{resume_data}>
 
         Act as a technical interviewer for me based on the resume and job description once the candidate greets you.
-
-        The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-        Candidate's questions are enclosed within '()'. The interviewer should not stray into topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. Don't answers in behalf of the candidate.
+        points to remember and breaking them is strictly prohibited:
+        1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+        2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
+        3. Candidate's questions are enclosed within '()'.
+        4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
+        5. Don't answers in behalf of the candidate and wait for the candidates response.
         """)
     interview={}
     if request.method == 'POST':
@@ -133,6 +136,8 @@ def start_interview():
 
 @app.route('/result')
 def result():
+    job_title = session.get('job_title')
+    candidate = session.get('candidate')
     job_description = session.get('job_description')
     resume_data = session.get('resume_data')
 
