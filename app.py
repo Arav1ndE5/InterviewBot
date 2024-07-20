@@ -6,7 +6,10 @@ from pdf2jpg import pdf2jpg
 import cv2
 import shutil
 import markdown
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = "uploads"
@@ -16,6 +19,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 x = random.choice([2, 1, 2, 2, 1, 1, 2, 1])
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
 gemini_api = os.getenv(f'GOOGLE_API_KEY{x}')
+# gemini_api ="AIzaSyBnj0Zur9APjsznvO6BuiWe0p9t0K3gx_4"
 
 # Configure the API key
 genai.configure(api_key=gemini_api)
@@ -47,6 +51,7 @@ def home():
 
 @app.route('/job', methods=['GET', 'POST'])
 def job():
+
     if request.method == 'POST':
         session['job_title'] = request.form['jobtitle']
         session['job_description'] = request.form['job']
@@ -66,7 +71,6 @@ def job():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
- 
     if request.method == 'POST':
         session['candidate'] = request.form['candidate']
         resume_file = request.files['resume']
@@ -76,19 +80,18 @@ def upload():
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             resume_file.save(resume_path)
 
-            # Check if the file is a PDF
+            # Check if the file is a PDF 
             if filename.lower().endswith('.pdf'):
                 # Convert PDF to images using pdf2jpg
-                output_path = os.path.join(app.config['UPLOAD_FOLDER'])
+                output_path = app.config['UPLOAD_FOLDER']
                 result = pdf2jpg.convert_pdf2jpg(resume_path, output_path, pages="ALL", dpi=200)
 
                 # Check if the result is as expected
                 if not isinstance(result, list) or not result:
                     print("Conversion failed or no output generated.")
                 else:
-
                     # Concatenate images horizontally if there are images to concatenate
-                    if len(result[0]['output_jpgfiles'])>1:
+                    if len(result[0]['output_jpgfiles']) > 1:
                         # Extract the list of generated image files
                         images = []
                         for img in result[0]['output_jpgfiles']:
@@ -99,7 +102,7 @@ def upload():
                         print(f"Concatenated image saved at: {concatenated_image_path}")
                         resume_path = concatenated_image_path  # Use the concatenated image path for processing
                     else:
-                        resume_path=result[0]['output_jpgfiles'][0]
+                        resume_path = result[0]['output_jpgfiles'][0]
                         print(result)
                         print(result[0]['output_jpgfiles'][0])
 
@@ -112,20 +115,22 @@ def upload():
             ]
             response = model.generate_content(prompt_parts)
             session['resume_data'] = response.text
-            
-             # Clean up the uploaded files
-            for file in os.listdir(app.config['UPLOAD_FOLDER']):
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
-                try:
+
+            # Ensure the directory handle is closed and then try to delete the directory
+            try:
+                # Clean up the uploaded files
+                for file in os.listdir(app.config['UPLOAD_FOLDER']):
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)
                     elif os.path.isdir(file_path):
                         shutil.rmtree(file_path)
-                except Exception as e:
-                    print(f'Failed to delete {file_path}. Reason: {e}')
+            except Exception as e:
+                print(f'Failed to delete {file_path}. Reason: {e}')
 
         return redirect(url_for('interview'))
     return render_template("upload.html")
+
 
 
 @app.route('/interview')
@@ -180,11 +185,10 @@ def start_interview():
                     The interview is given inside '<>'.
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
-                    make output in html such that they look good under a <h2> tag
-                ''')
+                    ''')
                 # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
                 response_str = markdown.markdown(response.text)
-                response_str = response.text.strip().replace('*','<br>')
+                response_str = response.text.strip().replace('*','')
                 print(response_str)
                 session['interview_result'] = response_str
                 session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
@@ -237,7 +241,7 @@ def result():
         response = model.generate_content([resume_scoring_prompt])
         response_str = markdown.markdown(response.text)
         # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
-        response_str = response.text.strip().replace('*','<br>')
+        response_str = response.text.strip().replace('*','')
         resume_score_evaluation = response_str
 
         return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)

@@ -4,3 +4,4 @@ pdf2jpg
 gunicorn
 opencv-python
 markdown
+python-dotenv
