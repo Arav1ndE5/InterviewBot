@@ -1,16 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Description</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles-job.css') }}">
-
-    <script>
-        function showSpinner() {
-            document.getElementById('spinner').style.display = 'block';
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -21,7 +15,7 @@
             <label for="jobtitle">Job Title:</label><br>
             <textarea id="jobtitle" name="jobtitle" rows="1" cols="50" required></textarea><br><br>
             <label for="job">Job Description:</label><br>
-            <textarea id="job" name="job" rows="6" cols="50" required placeholder="paste your job description"></textarea><br><br>
+            <textarea id="job" name="job" rows="6" cols="50" required placeholder="Enter/paste your job description"></textarea><br><br>
             <input type="submit" value="Next">
         </form>
     </div>
