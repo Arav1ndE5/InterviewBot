@@ -5,29 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles-result.css') }}">
-    
+    <script>
+        function printReport() {
+            window.print();
+        }
+    </script>
 </head>
 <body>
     <div class="result-container">
         <div class="result-header">
             <h1>Performance Report</h1><br>
             <h3>
-                candidate name  : {{candidate}}<br>
+                Candidate Name  : {{candidate}}<br>
                 Job Title       : {{job_title}}
             </h3>
             <hr>
         </div>
         <div class="result-content">
-            
             {{ interview_evaluation | safe }}
             <hr>
             {{ resume_score_evaluation | safe }}
             <br>
             <br>
         </div>
-        <div class="center-align">
-            <a href="{{ url_for('home') }}" class="btn-large waves-effect waves-light green accent-3">Return</a>
-        </div>
+    </div>
+    <div class="center-align">
+        <a href="{{ url_for('home') }}" class="btn-large btn-return">Return</a>
+        <button class="btn-large btn-print" onclick="printReport()">Print Report</button>
+    </div>
+    <div class="print-footer">
+        &copy; 2024 Interview-Bot. All rights reserved.
     </div>
 </body>
 </html>

@@ -239,7 +239,7 @@ def result():
         Areas of improvement:
         Overall assessment:
 
-        if resume or job description is not available return what is missing. Also don't return message about designated tags.
+        if resume or job description is not available return what is missing without mentioning about designated tags.
 
         make output in html such that they look good under a <h2> tag
         """
