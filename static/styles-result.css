@@ -1,0 +1,13 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+    margin: 1%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+    font-family: 'Roboto', sans-serif;
+    background-color: rgb(11, 11, 11);
+    color: rgb(245, 245, 245);
+}

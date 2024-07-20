@@ -185,6 +185,9 @@ def start_interview():
                     The interview is given inside '<>'.
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
+                    
+                    if interview transcript is not available return interview analysis could not be made.
+                    
                     make output in html such that they look good under a <h2> tag
                     ''')
                 # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
@@ -235,6 +238,8 @@ def result():
         Strengths:
         Areas of improvement:
         Overall assessment:
+
+        if resume or job description is not available return resume or job description is missing.
 
         make output in html such that they look good under a <h2> tag
         """
