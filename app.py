@@ -186,7 +186,7 @@ def start_interview():
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
                     
-                    if interview transcript is not available return interview analysis could not be made.
+                    if interview transcript is not available return interview analysis could not be made. Don't return message about designated tags.
                     
                     make output in html such that they look good under a <h2> tag
                     ''')
@@ -239,7 +239,7 @@ def result():
         Areas of improvement:
         Overall assessment:
 
-        if resume or job description is not available return resume or job description is missing.
+        if resume or job description is not available return what is missing. Also don't return message about designated tags.
 
         make output in html such that they look good under a <h2> tag
         """
