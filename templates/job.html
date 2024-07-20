@@ -7,11 +7,27 @@
     <title>Job Description</title>
 </head>
 <body>
+<<<<<<< Updated upstream
     <h1>Enter Job Description</h1>
     <form action="/job" method="post">
         <label for="job">Job Description:</label><br>
         <textarea id="job" name="job" rows="4" cols="50" required></textarea><br><br>
         <input type="submit" value="Next">
     </form>
+=======
+    <div class="container">
+        <div class="col 12" style="padding: 10%;">
+            <h1>Enter Job Description</h1>
+        </div>
+        <form action="/job" method="post" onsubmit="showSpinner()">
+            <label for="jobtitle">Job Title:</label><br>
+            <textarea id="jobtitle" name="jobtitle" rows="1" cols="50" required></textarea><br><br>
+            <label for="job">Job Description:</label><br>
+            <textarea id="job" name="job" rows="6" cols="50" required placeholder="Enter/paste your job description"></textarea><br><br>
+            <input type="submit" value="Next">
+        </form>
+    </div>
+    <div id="spinner" class="spinner"></div>
+>>>>>>> Stashed changes
 </body>
 </html>
