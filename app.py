@@ -16,7 +16,7 @@ app.config['UPLOAD_FOLDER'] = "uploads"
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Set a secret key for session management
-x = random.choice([2, 1, 2, 2, 1, 1, 2, 1])
+x = random.choice([2, 1, 3, 2, 1, 3, 2, 1, 3])
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
 gemini_api = os.getenv(f'GOOGLE_API_KEY{x}')
 
