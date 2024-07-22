@@ -1,0 +1,148 @@
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Global styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+    font-family: 'Roboto', sans-serif;
+    background-color: #111;
+    color: #f5f5f5;
+}
+
+/* Result container styles */
+.result-container {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: #e1e1e1;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Header styles */
+.result-header h1, .result-header h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.result-header {
+    margin-bottom: 20px;
+}
+
+/* Content styles */
+.result-content {
+    margin-bottom: 20px;
+}
+
+/* Horizontal line styles */
+hr {
+    border: 0;
+    border-top: 1px solid #444;
+}
+
+/* Button styles */
+.btn-large {
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
+    font-size: 16px;
+    text-align: center;
+    min-width: 100px;
+}
+
+.btn-return {
+    background-color: #0b305884; /* Blue */
+    color: #fff;
+}
+
+.btn-return:hover {
+    background-color: #0056b3;
+}
+
+.btn-print {
+    background-color: #143f1ec7; /* Green */
+    color: #fff;
+    border-style: none;
+}
+
+.btn-print:hover {
+    background-color: #218838;
+}
+
+/* Center alignment styles */
+.center-align {
+    text-align: center;
+}
+
+/* Print styles */
+@media print {
+    .btn-large, .center-align {
+        display: none;
+    }
+    
+    html, body {
+        background-color: #fff;
+        color: #000;
+        margin: 0;
+    }
+
+    .result-container {
+        box-shadow: none;
+        border-radius: 0;
+        width: 90%;
+        max-width: 90%;
+        margin: 0;
+        padding: 40px;
+        background-color: #fff;
+        color: #000;
+        word-wrap: break-word;
+    }
+
+    .result-header, .result-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    .result-header h1, .result-header h3 {
+        margin: 0;
+        padding: 0;
+    }
+
+    .result-header h3 {
+        margin-top: 10px;
+    }
+
+    hr {
+        border: 0;
+        border-top: 1px solid #000;
+    }
+
+    .print-footer {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 8px;
+    }
+}
+
+/* Hide print footer on screen */
+.print-footer {
+    color: #111;
+}
+
+@media (max-width: 768px) {
+    .result-container{
+        padding: 30px;
+    }
+}
