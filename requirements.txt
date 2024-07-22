@@ -1,6 +1,6 @@
 flask
 google.generativeai
-pdf2jpg
+pymupdf
 gunicorn
 opencv-python
 markdown

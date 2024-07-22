@@ -7,6 +7,7 @@ import cv2
 import shutil
 import markdown
 from dotenv import load_dotenv
+import fitz
 
 # Load environment variables from .env file
 load_dotenv()
@@ -69,42 +70,61 @@ def job():
 
     return render_template("job.html")
 
+def convert_pdf_to_images(pdf_path, output_path):
+    """
+    Convert a PDF file to images using PyMuPDF and concatenate the images if there are multiple pages.
+
+    Args:
+        pdf_path (str): The path to the PDF file.
+        output_path (str): The directory to save the output images.
+
+    Returns:
+        str: The path to the concatenated image file or the single image file.
+    """
+    try:
+        pdf_document = fitz.open(pdf_path)
+        images = []
+        for page_num in range(len(pdf_document)):
+            page = pdf_document.load_page(page_num)
+            pix = page.get_pixmap()
+            img_path = os.path.join(output_path, f"page_{page_num + 1}.png")
+            pix.save(img_path)
+            images.append(cv2.imread(img_path))
+
+        pdf_document.close()
+
+        if len(images) > 1:
+            resume_image = cv2.hconcat(images)
+            concatenated_image_path = os.path.join(output_path, "concatenated_resume.jpg")
+            cv2.imwrite(concatenated_image_path, resume_image)
+            return concatenated_image_path
+        else:
+            return img_path if images else None
+    except Exception as e:
+        print(f"Error during PDF conversion: {e}")
+        return None
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
         session['candidate'] = request.form['candidate']
         resume_file = request.files['resume']
+
         # Save the uploaded file to the resources folder
         if resume_file:
             filename = resume_file.filename
             resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             resume_file.save(resume_path)
 
-            # Check if the file is a PDF 
+            # Check if the file is a PDF
             if filename.lower().endswith('.pdf'):
-                # Convert PDF to images using pdf2jpg
+                # Convert PDF to images using the new function
                 output_path = app.config['UPLOAD_FOLDER']
-                result = pdf2jpg.convert_pdf2jpg(resume_path, output_path, pages="ALL", dpi=200)
-
-                # Check if the result is as expected
-                if not isinstance(result, list) or not result:
-                    print("Conversion failed or no output generated.")
-                else:
-                    # Concatenate images horizontally if there are images to concatenate
-                    if len(result[0]['output_jpgfiles']) > 1:
-                        # Extract the list of generated image files
-                        images = []
-                        for img in result[0]['output_jpgfiles']:
-                            images.append(cv2.imread(img))
-                        resume_image = cv2.hconcat(images)
-                        concatenated_image_path = os.path.join(output_path, "concatenated_resume.jpg")
-                        cv2.imwrite(concatenated_image_path, resume_image)
-                        print(f"Concatenated image saved at: {concatenated_image_path}")
-                        resume_path = concatenated_image_path  # Use the concatenated image path for processing
-                    else:
-                        resume_path = result[0]['output_jpgfiles'][0]
-                        print(result)
-                        print(result[0]['output_jpgfiles'][0])
+                resume_path = convert_pdf_to_images(resume_path, output_path)
+                
+                # Check if the conversion was successful
+                if not resume_path:
+                    return "Conversion failed or no output generated.", 500
 
             # Generate content from the resume
             print(resume_path)
@@ -113,12 +133,15 @@ def upload():
                 "resume: ",
                 genai.upload_file(resume_path)
             ]
-            response = model.generate_content(prompt_parts)
-            session['resume_data'] = response.text
-
-            # Ensure the directory handle is closed and then try to delete the directory
             try:
-                # Clean up the uploaded files
+                response = model.generate_content(prompt_parts)
+                session['resume_data'] = response.text
+            except Exception as e:
+                print(f"API call failed: {e}")
+                return "API call failed", 500
+
+            # Clean up the uploaded files
+            try:
                 for file in os.listdir(app.config['UPLOAD_FOLDER']):
                     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
                     if os.path.isfile(file_path) or os.path.islink(file_path):
@@ -130,8 +153,6 @@ def upload():
 
         return redirect(url_for('interview'))
     return render_template("upload.html")
-
-
 
 @app.route('/interview')
 def interview():
