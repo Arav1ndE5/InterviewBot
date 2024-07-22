@@ -19,7 +19,6 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 x = random.choice([2, 1, 2, 2, 1, 1, 2, 1])
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'supersecretkey')
 gemini_api = os.getenv(f'GOOGLE_API_KEY{x}')
-# gemini_api ="AIzaSyBnj0Zur9APjsznvO6BuiWe0p9t0K3gx_4"
 
 # Configure the API key
 genai.configure(api_key=gemini_api)
@@ -70,16 +69,7 @@ def job():
     return render_template("job.html")
 
 def convert_pdf_to_images(pdf_path, output_path):
-    """
-    Convert a PDF file to images using PyMuPDF and concatenate the images if there are multiple pages.
-
-    Args:
-        pdf_path (str): The path to the PDF file.
-        output_path (str): The directory to save the output images.
-
-    Returns:
-        str: The path to the concatenated image file or the single image file.
-    """
+    
     try:
         pdf_document = fitz.open(pdf_path)
         images = []
@@ -156,7 +146,6 @@ def upload():
 @app.route('/interview')
 def interview():
     return render_template('interview.html')
-
 
 @app.route('/start-interview', methods=['GET', 'POST'])
 def start_interview():
