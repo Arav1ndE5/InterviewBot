@@ -161,7 +161,7 @@ def start_interview():
         and my resume enclosed within '<>':
         <{resume_data}>
 
-        Act as Theo the interviewer for me based on the resume and job description once the candidate greets you. Interview should have techncial round and HR round. 
+        Act as Theo the interviewer for me based on the resume and job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
         points to remember and breaking them is strictly prohibited:
         1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
         2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
@@ -194,8 +194,6 @@ def start_interview():
                     The interview is given inside '<>'.
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
-                    
-                    if interview transcript is not available return interview analysis could not be made. Don't return message about designated tags.
                     
                     make output in html such that they look good under a <h2> tag
                     ''')
