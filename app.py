@@ -155,13 +155,14 @@ def start_interview():
     chat = model.start_chat(history=[])
     # Initial question setup for GET request
     response = chat.send_message(f"""
+        Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
         You are given my job description that is enclosed within '//':
         //{shortened_jd}//
 
         and my resume enclosed within '<>':
         <{resume_data}>
 
-        Act as Theo the interviewer for me based on the resume and job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+        based on the resume and job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
         points to remember and breaking them is strictly prohibited:
         1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
         2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
@@ -182,19 +183,20 @@ def start_interview():
             
             # Initialize the interview dictionary with lists for candidate and interviewer responses
             if 'interview' not in session:
-                session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
+                session['interview'] = "interviewer: Let's Start the interview"
             interview = session['interview']
+
+            response_str=''
             print(interview)
-            print(interview['interviewer'][-1])
+            print(response_str)
 
-
-            if get_result or interview['interviewer'][-1] == "Click end interview to get result.":
+            if get_result or response_str == "Click end interview to get result.":
                 response = chat.send_message(f'''
-                    Analyze the following dictionary that contains interviewer's questions and candidate's responses as lists where the first question is given by interview["interviewer"][0] and answer is given by interview["candidate"][0] and second question is given by interview["interviewer"][1] and answer is given by interview["candidate"][1] so on.
+                    Analyze the following transcript that contains interviewer's questions and candidate's responses.
                     The interview is given inside '<>'.
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
-                    
+                    if transcript isnt avilable or incomplete, return 'Please retake the interview to provide interview assessment'.
                     make output in html such that they look good under a <h2> tag
                     ''')
                 # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
@@ -202,15 +204,15 @@ def start_interview():
                 response_str = response.text.strip().replace('**','')
                 print(response_str)
                 session['interview_result'] = response_str
-                session['interview'] = {"interviewer": ["Let's Start the interview"],"candidate": []}
-
+                session['interview'] = "interviewer: Let's Start the interview"
                 return jsonify({'redirect': url_for('result')})
             
             if user_input:
-                interview["candidate"].append(user_input)
+                # interview["candidate"].append(user_input)
+                interview += f", candidate: {user_input}"
                 response = chat.send_message(f'({user_input})')
                 response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "").replace("Theo:", "")
-                interview["interviewer"].append(response_str)
+                interview += f", interviewer: {response_str}"
                 session['interview'] = interview  # Update the session with the latest interview data
                 print(response_str)
                 return jsonify({'message': response_str})
@@ -246,7 +248,7 @@ def result():
         Areas of improvement:
         Overall assessment:
 
-        if resume or job description is not available return what is missing without mentioning about designated tags.
+        if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
 
         make output in html such that they look good under a <h2> tag
         """

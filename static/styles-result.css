@@ -18,7 +18,7 @@ html, body {
 /* Result container styles */
 .result-container {
     width: 80%;
-    max-width: 900px;
+    max-width: 600px;
     margin: 20px auto;
     padding: 20px;
     background-color: #1e1e1e;
@@ -91,7 +91,7 @@ hr {
         display: none;
     }
     
-    body {
+    html, body {
         background-color: #fff;
         color: #000;
         margin: 0;
@@ -100,12 +100,13 @@ hr {
     .result-container {
         box-shadow: none;
         border-radius: 0;
-        width: 100%;
-        max-width: 100%;
+        width: 90%;
+        max-width: 90%;
         margin: 0;
-        padding: 20px;
+        padding: 40px;
         background-color: #fff;
         color: #000;
+        word-wrap: break-word;
     }
 
     .result-header, .result-content {
