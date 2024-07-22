@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, redirect, url_for, session, j
 import google.generativeai as genai
 import os
 import random
-from pdf2jpg import pdf2jpg
 import cv2
 import shutil
 import markdown
