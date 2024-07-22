@@ -209,7 +209,7 @@ def start_interview():
             if user_input:
                 interview["candidate"].append(user_input)
                 response = chat.send_message(f'({user_input})')
-                response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
+                response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "").replace("Theo:", "")
                 interview["interviewer"].append(response_str)
                 session['interview'] = interview  # Update the session with the latest interview data
                 print(response_str)
