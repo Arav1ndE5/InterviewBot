@@ -1,4 +1,7 @@
 flask
 google.generativeai
-pdf2image
+pymupdf
 gunicorn
+opencv-python
+markdown
+python-dotenv

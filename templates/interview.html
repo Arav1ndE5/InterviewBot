@@ -3,89 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Technical Interview</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-        .chat-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .chat-header {
-            background-color: #075e54;
-            color: #ffffff;
-            padding: 10px;
-            text-align: center;
-        }
-        .chat-messages {
-            height: 400px;
-            overflow-y: scroll;
-            padding: 10px;
-            background-color: #e5ddd5;
-        }
-        .chat-bubble {
-            max-width: 80%;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 10px;
-            position: relative;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .chat-bubble.user {
-            background-color: #dcf8c6;
-            margin-left: auto;
-            margin-right: 0;
-        }
-        .chat-bubble.assistant {
-            background-color: #ffffff;
-            margin-left: 0;
-            margin-right: auto;
-        }
-        .chat-input-container {
-            display: flex;
-            padding: 10px;
-            background-color: #ffffff;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #cccccc;
-            border-radius: 20px;
-        }
-        .chat-submit {
-            margin-left: 10px;
-            padding: 10px 20px;
-            background-color: #075e54;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        .chat-end {
-            margin-left: 10px;
-            padding: 10px 20px;
-            background-color: #d9534f;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles-interview.css') }}">
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>Technical Interview</h1>
+            <h1>Interview</h1>
         </div>
+        <div id="spinner" class="spinner"></div>
         <div class="chat-messages" id="chat-messages">
             <!-- Chat messages will be dynamically added here -->
         </div>
@@ -96,11 +22,6 @@
         </div>
     </div>
     <script>
-        async function fetchInitialQuestion() {
-            const response = await fetch('/start-interview');
-            const data = await response.json();
-            addMessage(data.message, 'assistant');
-        }
     
         async function submitAnswer() {
             const answerInput = document.getElementById('answer');
@@ -140,10 +61,13 @@
         }
     
         async function endInterview() {
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('chat-messages').style.display = 'none';
+            
             const response = await fetch('/start-interview', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_input: 'ends the interview' })
+                body: JSON.stringify({ get_result: true })
             });
             const data = await response.json();
             if (data.redirect) {
@@ -153,8 +77,6 @@
             }
         }
     
-        // Start the interview by fetching the initial question
-        fetchInitialQuestion();
     </script>
     
     
