@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, session, j
 import google.generativeai as genai
 import os
 import random
-import cv2
+# import cv2
 import shutil
 import markdown
 from dotenv import load_dotenv
@@ -72,23 +72,26 @@ def convert_pdf_to_images(pdf_path, output_path):
     
     try:
         pdf_document = fitz.open(pdf_path)
-        images = []
+        # images = []
         for page_num in range(len(pdf_document)):
             page = pdf_document.load_page(page_num)
             pix = page.get_pixmap()
             img_path = os.path.join(output_path, f"page_{page_num + 1}.png")
             pix.save(img_path)
-            images.append(cv2.imread(img_path))
+            # images.append(cv2.imread(img_path))
 
         pdf_document.close()
 
-        if len(images) > 1:
-            resume_image = cv2.hconcat(images)
-            concatenated_image_path = os.path.join(output_path, "concatenated_resume.jpg")
-            cv2.imwrite(concatenated_image_path, resume_image)
-            return concatenated_image_path
-        else:
-            return img_path if images else None
+        # if len(images) > 1:
+        #     resume_image = cv2.hconcat(images)
+        #     concatenated_image_path = os.path.join(output_path, "concatenated_resume.jpg")
+        #     cv2.imwrite(concatenated_image_path, resume_image)
+        #     return concatenated_image_path
+        # else:
+        #     return img_path if images else None
+
+        return img_path if img_path else None
+
     except Exception as e:
         print(f"Error during PDF conversion: {e}")
         return None

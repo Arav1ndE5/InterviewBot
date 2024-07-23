@@ -2,6 +2,5 @@ flask
 google.generativeai
 pymupdf
 gunicorn
-opencv-python-headless
 markdown
 python-dotenv
