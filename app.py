@@ -12,7 +12,7 @@ import fitz
 load_dotenv()
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = "uploads"
+app.config['UPLOAD_FOLDER'] = "/tmp/uploads"
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Set a secret key for session management
