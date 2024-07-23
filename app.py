@@ -50,7 +50,6 @@ def home():
 
 @app.route('/job', methods=['GET', 'POST'])
 def job():
-
     if request.method == 'POST':
         session['job_title'] = request.form['jobtitle']
         session['job_description'] = request.form['job']
@@ -69,15 +68,14 @@ def job():
     return render_template("job.html")
 
 def convert_pdf_to_images(pdf_path, output_path):
-    
     try:
         pdf_document = fitz.open(pdf_path)
         # images = []
-        for page_num in range(len(pdf_document)):
-            page = pdf_document.load_page(page_num)
-            pix = page.get_pixmap()
-            img_path = os.path.join(output_path, f"page_{page_num + 1}.png")
-            pix.save(img_path)
+        # for page_num in range(len(pdf_document)):
+        page = pdf_document.load_page(0)
+        pix = page.get_pixmap()
+        img_path = os.path.join(output_path, f"resume.png")
+        pix.save(img_path)
             # images.append(cv2.imread(img_path))
 
         pdf_document.close()
@@ -216,55 +214,17 @@ def start_interview():
                 response = chat.send_message(f'({user_input})')
                 response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "").replace("Theo:", "")
                 interview += f", interviewer: {response_str}"
-                session['interview'] = interview  # Update the session with the latest interview data
-                print(response_str)
-                return jsonify({'message': response_str})
-            
+                session['interview'] = interview
+                return jsonify({'response': response_str})
         else:
-            return jsonify({'error': 'Invalid request data'})
+            return jsonify({'error': 'No data provided'}), 400
 
-
+    return render_template('start-interview.html', initial_question=response.text)
 
 @app.route('/result')
 def result():
-    job_title = session.get('job_title')
-    candidate = session.get('candidate')
-    job_description = session.get('job_description')
-    resume_data = session.get('resume_data')
-
-    if job_description and resume_data:
-        resume_data = session['resume_data']
-        shortened_jd = session['shortened_jd']
-        interview_evaluation = session.get('interview_result', 'No interview evaluation available.')
-
-        resume_scoring_prompt = f"""
-        You are given a job description that is enclosed within '//':
-        //{shortened_jd}//
-
-        The candidate walks in and hands you their resume enclosed within '<>':
-        <{resume_data}>
-
-        Compare both job description and resume and return the following:
-        Resume score: a score out of 100 based on the requirements met by resume for the job description.
-        Evaluation: how the scores are awarded.
-        Strengths:
-        Areas of improvement:
-        Overall assessment:
-
-        if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
-
-        make output in html such that they look good under a <h2> tag
-        """
-
-        response = model.generate_content([resume_scoring_prompt])
-        response_str = markdown.markdown(response.text)
-        # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
-        response_str = response.text.strip().replace('**','')
-        resume_score_evaluation = response_str
-
-        return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
-    return redirect(url_for('home'))
-
+    interview_result = session.get('interview_result', "No result available.")
+    return render_template('result.html', result=interview_result)
 
 if __name__ == '__main__':
     app.run(debug=True)
