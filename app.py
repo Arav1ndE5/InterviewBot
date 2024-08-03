@@ -58,8 +58,9 @@ def job():
         # Shorten job description
         job_description = session.get('job_description')
         shorten_jd_prompt = [
-            f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities
+            f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities, skills required and such
             /{job_description}/
+            if no meaning full job description is given return just the word 'None'
             """
         ]
         response = model.generate_content(shorten_jd_prompt)
@@ -142,6 +143,9 @@ def upload():
                         shutil.rmtree(file_path)
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
+        
+        else:
+            session['resume_data'] = 'None'
 
         return redirect(url_for('interview'))
     return render_template("upload.html")
@@ -154,26 +158,71 @@ def interview():
 def start_interview():
     shortened_jd = session.get('shortened_jd')
     resume_data = session.get('resume_data')
+    job_title = session.get('job_title')
+    
 
     chat = model.start_chat(history=[])
     # Initial question setup for GET request
-    response = chat.send_message(f"""
-        Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-        You are given my job description that is enclosed within '//':
-        //{shortened_jd}//
+    if shortened_jd == 'None' and resume_data == 'None':
+        response = chat.send_message(f"""
+            Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+            points to remember and breaking them is strictly prohibited:
+            1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+            2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
+            3. Candidate's questions are enclosed within '()'.
+            4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
+            5. Don't answers in behalf of the candidate and wait for the candidates response.
+            6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
+            """)
+    elif shortened_jd == 'None' and resume_data != 'None':
+        response = chat.send_message(f"""
+            Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            I'm interviewing for the post of {job_title}
 
-        and my resume enclosed within '<>':
-        <{resume_data}>
+            and my resume enclosed within '<>':
+            <{resume_data}>
 
-        based on the resume and job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
-        points to remember and breaking them is strictly prohibited:
-        1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
-        2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
-        3. Candidate's questions are enclosed within '()'.
-        4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
-        5. Don't answers in behalf of the candidate and wait for the candidates response.
-        6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
-        """)
+            based on the resume and job title once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+            points to remember and breaking them is strictly prohibited:
+            1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+            2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
+            3. Candidate's questions are enclosed within '()'.
+            4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
+            5. Don't answers in behalf of the candidate and wait for the candidates response.
+            6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
+            """)
+    elif shortened_jd != 'None' and resume_data == 'None':
+        response = chat.send_message(f"""
+            Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            You are given my job description that is enclosed within '//':
+            //{job_title}:{shortened_jd}//
+
+            based on the job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+            points to remember and breaking them is strictly prohibited:
+            1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+            2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
+            3. Candidate's questions are enclosed within '()'.
+            4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
+            5. Don't answers in behalf of the candidate and wait for the candidates response.
+            6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
+            """)
+    else:
+        response = chat.send_message(f"""
+            Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            You are given my job description that is enclosed within '//':
+            //{job_title}:{shortened_jd}//
+
+            based on the job description and my resume, once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+            points to remember and breaking them is strictly prohibited:
+            1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
+            2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
+            3. Candidate's questions are enclosed within '()'.
+            4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
+            5. Don't answers in behalf of the candidate and wait for the candidates response.
+            6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
+            """)
+
     # initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
 
     if request.method == 'POST':
@@ -181,6 +230,7 @@ def start_interview():
         if data:
             user_input = data.get('user_input')
             get_result = data.get('get_result')
+            user_input = user_input.strip().replace("'", '').replace('"', '').replace('#','').replace('#','')
             print(get_result)
             print(user_input)
 
