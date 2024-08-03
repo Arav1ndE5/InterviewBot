@@ -32,10 +32,10 @@ generation_config = {
 }
 
 safety_settings = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
 ]
 
 model = genai.GenerativeModel(
@@ -172,6 +172,7 @@ def start_interview():
         3. Candidate's questions are enclosed within '()'.
         4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
         5. Don't answers in behalf of the candidate and wait for the candidates response.
+        6. If the candidate replies 'ok', Then ask to candidate to go on. 
         """)
     # initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
 
@@ -187,6 +188,7 @@ def start_interview():
             # Initialize the interview dictionary with lists for candidate and interviewer responses
             if 'interview' not in session:
                 session['interview'] = "interviewer: Let's Start the interview"
+                return jsonify({'message': "Let's Start the interview"})
             interview = session['interview']
 
             response_str=''
