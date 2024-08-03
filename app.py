@@ -188,7 +188,6 @@ def start_interview():
             # Initialize the interview dictionary with lists for candidate and interviewer responses
             if 'interview' not in session:
                 session['interview'] = "interviewer: Let's Start the interview"
-                return jsonify({'message': "Let's Start the interview"})
             interview = session['interview']
 
             response_str=''
