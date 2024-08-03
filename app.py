@@ -172,7 +172,7 @@ def start_interview():
         3. Candidate's questions are enclosed within '()'.
         4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
         5. Don't answers in behalf of the candidate and wait for the candidates response.
-        6. If the candidate replies 'ok', Then ask to candidate to go on. 
+        6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
         """)
     # initial_question = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "")
 
@@ -194,6 +194,17 @@ def start_interview():
             print(interview)
             print(response_str)
 
+            
+            if user_input:
+                # interview["candidate"].append(user_input)
+                interview += f", candidate: {user_input}"
+                response = chat.send_message(f'({user_input})')
+                response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "").replace("Theo:", "")
+                interview += f", interviewer: {response_str}"
+                session['interview'] = interview  # Update the session with the latest interview data
+                print(response_str)
+                return jsonify({'message': response_str})
+            
             if get_result or response_str == "Click end interview to get result.":
                 response = chat.send_message(f'''
                     Analyze the following transcript that contains interviewer's questions and candidate's responses.
@@ -210,17 +221,6 @@ def start_interview():
                 session['interview_result'] = response_str
                 session['interview'] = "interviewer: Let's Start the interview"
                 return jsonify({'redirect': url_for('result')})
-            
-            if user_input:
-                # interview["candidate"].append(user_input)
-                interview += f", candidate: {user_input}"
-                response = chat.send_message(f'({user_input})')
-                response_str = response.text.strip().replace('"', "").replace("*", "").replace("`", "").replace(">", "").replace("Interviewer:", "").replace("Theo:", "")
-                interview += f", interviewer: {response_str}"
-                session['interview'] = interview  # Update the session with the latest interview data
-                print(response_str)
-                return jsonify({'message': response_str})
-            
         else:
             return jsonify({'error': 'Invalid request data'})
 

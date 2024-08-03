@@ -151,6 +151,8 @@ body {
 @media only screen and (max-width: 600px) {
     body{
         width: 95vw;
+        overflow: auto; /* Allow scrolling if necessary */
+        height: 90vh;
     }
     .chat-container {
         max-width: 100%;
@@ -178,8 +180,5 @@ body {
     .chat-bubble {
         max-width: 90%; /* Ensure bubbles fit within smaller screens */
         padding: 8px 12px; /* Adjusted padding for readability */
-    }
-    body {
-        overflow: auto; /* Allow scrolling if necessary */
     }
 }
