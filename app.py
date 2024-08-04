@@ -326,12 +326,12 @@ def result():
         The candidate walks in and hands you their resume enclosed within '<>':
         <{resume_data}>
         Compare both job title and resume and return the following:
-        Resume score: a score out of 100 based on the requirements met by resume for the job description.
+        Resume score: a score out of 100 based on the requirements met by resume for the job title.
         Evaluation: how the scores are awarded.
         Strengths:
         Areas of improvement:
         Overall assessment:
-        if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
+        if resume or job title is not available return "Please provide a valid resume." or "Please enter a valid Job title" without mentioning about designated tags.
         make output in html such that they look good under a <h2> tag
         """
 
@@ -349,4 +349,4 @@ def result():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
