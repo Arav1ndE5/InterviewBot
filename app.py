@@ -171,7 +171,7 @@ def start_interview():
         print('No JD and Resume')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            Interview is for the post of {job_title}..
+            Interview is for the post of {job_title}. If job title provided is meaningless collect job title from candidate.
             Once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
@@ -185,7 +185,7 @@ def start_interview():
         print('No JD')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            Interview is for the post of {job_title}.
+            Interview is for the post of {job_title}. If job title provided is meaningless collect job title from candidate.
             and my resume enclosed within '<>':
             <{resume_data}>
             based on the resume and job title once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
@@ -201,7 +201,7 @@ def start_interview():
         print('No Resume')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            Interview is for the post of {job_title}.
+            Interview is for the post of {job_title}. If job title provided is meaningless collect job title from candidate.
             You are given my job description that is enclosed within '//':
             //{job_title}:{shortened_jd}//
             based on the job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
@@ -217,7 +217,7 @@ def start_interview():
         print('Jd and Resume found')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            Interview is for the post of {job_title}.
+            Interview is for the post of {job_title}. If job title provided is meaningless collect job title from candidate.
             You are given my job description that is enclosed within '//':
             //{job_title}:{shortened_jd}//
             and my resume enclosed within '<>':
