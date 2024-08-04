@@ -57,14 +57,18 @@ def job():
 
         # Shorten job description
         job_description = session.get('job_description')
-        shorten_jd_prompt = [
-            f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities, skills required and such
-            /{job_description}/
-            if no meaning full job description is given return just the word 'None'
-            """
-        ]
-        response = model.generate_content(shorten_jd_prompt)
-        session['shortened_jd'] = response.text
+        if job_description:
+            shorten_jd_prompt = [
+                f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities, skills required and such
+                /{job_description}/
+                if no meaning full job description is given return just the word 'None'
+                """
+            ]
+            response = model.generate_content(shorten_jd_prompt)
+            session['shortened_jd'] = response.text
+        else:
+            session['shortened_jd'] = "None"
+
         return redirect(url_for('upload'))
 
     return render_template("job.html")
@@ -164,9 +168,11 @@ def start_interview():
     chat = model.start_chat(history=[])
     # Initial question setup for GET request
     if shortened_jd == 'None' and resume_data == 'None':
+        print('No JD and Resume')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
+            Interview is for the post of {job_title}..
+            Once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
             2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
@@ -176,13 +182,12 @@ def start_interview():
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
             """)
     elif shortened_jd == 'None' and resume_data != 'None':
+        print('No JD')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
-            I'm interviewing for the post of {job_title}
-
+            Interview is for the post of {job_title}.
             and my resume enclosed within '<>':
             <{resume_data}>
-
             based on the resume and job title once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
@@ -193,11 +198,12 @@ def start_interview():
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
             """)
     elif shortened_jd != 'None' and resume_data == 'None':
+        print('No Resume')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            Interview is for the post of {job_title}.
             You are given my job description that is enclosed within '//':
             //{job_title}:{shortened_jd}//
-
             based on the job description once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
@@ -208,11 +214,14 @@ def start_interview():
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
             """)
     else:
+        print('Jd and Resume found')
         response = chat.send_message(f"""
             Your name is Theo. You are an Interviewer that helps candidates to prepare for interviews.
+            Interview is for the post of {job_title}.
             You are given my job description that is enclosed within '//':
             //{job_title}:{shortened_jd}//
-
+            and my resume enclosed within '<>':
+            <{resume_data}>
             based on the job description and my resume, once the candidate greets you introduce yourself and start the interview. Interview should have techncial round and HR round. 
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
