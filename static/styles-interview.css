@@ -11,7 +11,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 96vh;
+    height: 85vh;
     width: 100vw;
     overflow: hidden;
     flex-direction: column;
@@ -152,7 +152,7 @@ body {
     body{
         width: 95vw;
         overflow: auto; /* Allow scrolling if necessary */
-        height: 90vh;
+        height: 80vh;
     }
     .chat-container {
         max-width: 100%;
