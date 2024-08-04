@@ -176,7 +176,7 @@ def start_interview():
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
             2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
-            3. Candidate's questions are enclosed within '()'.
+            3. Candidate's questions are enclosed within '()'. Don't take into account other special characters in the candidate's questions.
             4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
             5. Don't answers in behalf of the candidate and wait for the candidates response.
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
@@ -192,7 +192,7 @@ def start_interview():
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
             2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
-            3. Candidate's questions are enclosed within '()'.
+            3. Candidate's questions are enclosed within '()'. Don't take into account other special characters in the candidate's questions.
             4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
             5. Don't answers in behalf of the candidate and wait for the candidates response.
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
@@ -208,7 +208,7 @@ def start_interview():
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
             2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
-            3. Candidate's questions are enclosed within '()'.
+            3. Candidate's questions are enclosed within '()'. Don't take into account other special characters in the candidate's questions.
             4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
             5. Don't answers in behalf of the candidate and wait for the candidates response.
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
@@ -226,7 +226,7 @@ def start_interview():
             points to remember and breaking them is strictly prohibited:
             1. The interviewer should adapt the questions and delve deeper based on the candidate's responses and the specific requirements of the role.
             2. The interviewer should not answer topics that are not part of the interview. Also should not provide feedbacks or tips to the candidate on how to improve the interview. 
-            3. Candidate's questions are enclosed within '()'.
+            3. Candidate's questions are enclosed within '()'. Don't take into account other special characters in the candidate's questions.
             4. If interview has ended return "Click end interview to get result.". Don't return anything else. 
             5. Don't answers in behalf of the candidate and wait for the candidates response.
             6. If the candidate replies 'ok' when asked a question, prompt the candidate to go on and complete his/her answer.
@@ -239,7 +239,6 @@ def start_interview():
         if data:
             user_input = data.get('user_input')
             get_result = data.get('get_result')
-            user_input = user_input.strip().replace("'", '').replace('"', '').replace('#','').replace('#','')
             print(get_result)
             print(user_input)
 
@@ -291,28 +290,23 @@ def result():
     candidate = session.get('candidate')
     job_description = session.get('job_description')
     resume_data = session.get('resume_data')
+    interview_evaluation = session.get('interview_result', 'No interview evaluation available.')
 
-    if job_description and resume_data:
-        resume_data = session['resume_data']
+    if job_description!='None' and resume_data!='None':
         shortened_jd = session['shortened_jd']
-        interview_evaluation = session.get('interview_result', 'No interview evaluation available.')
 
         resume_scoring_prompt = f"""
         You are given a job description that is enclosed within '//':
         //{shortened_jd}//
-
         The candidate walks in and hands you their resume enclosed within '<>':
         <{resume_data}>
-
         Compare both job description and resume and return the following:
         Resume score: a score out of 100 based on the requirements met by resume for the job description.
         Evaluation: how the scores are awarded.
         Strengths:
         Areas of improvement:
         Overall assessment:
-
         if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
-
         make output in html such that they look good under a <h2> tag
         """
 
@@ -323,7 +317,35 @@ def result():
         resume_score_evaluation = response_str
 
         return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
-    return redirect(url_for('home'))
+    
+    elif job_description=='None' and resume_data!='None':
+
+        resume_scoring_prompt = f"""
+        You are given a job title that is enclosed within '//':
+        //{job_title}//
+        The candidate walks in and hands you their resume enclosed within '<>':
+        <{resume_data}>
+        Compare both job title and resume and return the following:
+        Resume score: a score out of 100 based on the requirements met by resume for the job description.
+        Evaluation: how the scores are awarded.
+        Strengths:
+        Areas of improvement:
+        Overall assessment:
+        if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
+        make output in html such that they look good under a <h2> tag
+        """
+
+        response = model.generate_content([resume_scoring_prompt])
+        response_str = markdown.markdown(response.text)
+        # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
+        response_str = response.text.strip().replace('**','')
+        resume_score_evaluation = response_str
+
+        return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation=resume_score_evaluation, interview_evaluation=interview_evaluation)
+
+    else:
+        return render_template('result.html',candidate=candidate, job_title=job_title, resume_score_evaluation='<h2>Resume not available<h2>', interview_evaluation=interview_evaluation)
+
 
 
 if __name__ == '__main__':
