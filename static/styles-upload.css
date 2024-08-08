@@ -5,6 +5,15 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+    background-color: #111;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-image: url('resume_bg.jpeg');
