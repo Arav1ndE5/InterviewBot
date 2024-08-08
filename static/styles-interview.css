@@ -153,6 +153,7 @@ body {
         width: 95vw;
         overflow: auto; /* Allow scrolling if necessary */
         height: 80vh;
+        padding-top: 15px;
     }
     .chat-container {
         max-width: 100%;

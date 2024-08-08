@@ -59,9 +59,8 @@ def job():
         job_description = session.get('job_description')
         if job_description:
             shorten_jd_prompt = [
-                f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities, skills required and such
+                f"""Make the job description given inside '//' into short and contains most meaningful parts such as experience, responsibilities, skills required
                 /{job_description}/
-                if no meaning full job description is given return just the word 'None'
                 """
             ]
             response = model.generate_content(shorten_jd_prompt)
@@ -270,7 +269,7 @@ def start_interview():
                     <{interview}>
                     now create assessment for the candidates technical knowledge based on the interview. Also assess the candidate's soft skills like communication, problem-solving, attitude and teamwork and return the interview performance of the candidate on a score out of 100 based on the user messages after the start of the interview.
                     if transcript isnt avilable or incomplete, return 'Please retake the interview to provide interview assessment'.
-                    make output in html such that they look good under a <h2> tag
+                    make output in html such that they look good under a <h2> tag in points.
                     ''')
                 # response_str = response.text.strip().replace('**', '').replace('. *', '<br>').replace('*','<br>')
                 response_str = markdown.markdown(response.text)
@@ -307,7 +306,7 @@ def result():
         Areas of improvement:
         Overall assessment:
         if resume or job description is not available return "Please provide a valid resume." or "Please enter a valid Job description" without mentioning about designated tags.
-        make output in html such that they look good under a <h2> tag
+        make output in html such that they look good under a <h2> tag in points.
         """
 
         response = model.generate_content([resume_scoring_prompt])
@@ -332,7 +331,7 @@ def result():
         Areas of improvement:
         Overall assessment:
         if resume or job title is not available return "Please provide a valid resume." or "Please enter a valid Job title" without mentioning about designated tags.
-        make output in html such that they look good under a <h2> tag
+        make output in html such that they look good under a <h2> tag in points.
         """
 
         response = model.generate_content([resume_scoring_prompt])
@@ -349,4 +348,4 @@ def result():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
